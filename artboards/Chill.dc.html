@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MBMC Radio, chill mode</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/mbmcradio/tokens.css">
+<link rel="stylesheet" href="ds/mbmcradio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo&family=Inter:wght@100..900&display=swap">
+<style>
+body { margin: 0; }
+a { color: var(--link, #f0c93a); text-decoration: underline; }
+a:hover { text-decoration: none; }
+@keyframes eq-bounce {
+  0% { transform: scaleY(0.16); }
+  50% { transform: scaleY(1); }
+  100% { transform: scaleY(0.16); }
+}
+.eq-bar { transform-origin: bottom center; animation-name: eq-bounce; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+.eq--paused .eq-bar { animation: none; transform: scaleY(0.16); transition: transform 600ms ease-out; }
+@media (prefers-reduced-motion: reduce) { .eq-bar { animation: none; transform: scaleY(0.5); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.9s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .spin { animation-duration: 2.4s; } }
+.mbmc-iconbtn.repeat-on { background: var(--brand-soft, #3a3118); color: var(--ink, #f3efe6); }
+.repeat-badge { position: absolute; top: 3px; right: 4px; font: 700 12px/1 Inter, system-ui, sans-serif; color: inherit; }
+.sleep-opt { width: 100%; box-sizing: border-box; margin: 0; padding: 8px 12px; border: 0; border-radius: 6px; background: none; text-align: left; font: var(--text-label, 500 14px/20px Inter, system-ui, sans-serif); color: var(--ink, #f3efe6); cursor: pointer; }
+.sleep-opt:hover { background: var(--indigo-soft, #2e2549); }
+.sleep-opt[aria-checked="true"] { background: var(--brand-soft, #3a3118); }
+.mbmc:focus-visible { outline: 2px solid var(--focus, #f0c93a); outline-offset: 2px; box-shadow: 0 0 0 2px var(--surface, #0e0c16); }
+.mbmc-player { height: auto; min-height: 72px; padding: 12px 16px; }
+.mbmc-player__center { gap: 8px; }
+.mbmc-bar::before { content: ''; position: absolute; left: 0; right: 0; top: -10px; bottom: -10px; }
+.clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mbmc-btn--ghost[aria-pressed="true"], .mbmc-btn--ghost.is-armed { background: var(--indigo-soft, #2e2549); }
+.mbmc-btn--ghost svg { width: 16px; height: 16px; fill: currentColor; }
+.sleep-opt { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sleep-opt svg { width: 16px; height: 16px; flex: 0 0 16px; fill: currentColor; }
+.phone-seek .mbmc-bar__knob { opacity: 1; }
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; background: var(--surface, #0e0c16); color: var(--ink, #f3efe6); font-family: var(--font-sans, Inter, system-ui, sans-serif); padding-bottom: 98px;">
+
+  <header style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; box-sizing: border-box; padding: 20px 28px;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <img src="/_blob/4a3582cd7458da03f9de56fbdecea948" alt="" style="width: 40px; height: 40px; border-radius: 9999px;">
+      <p style="margin: 0; font: var(--text-title, 700 16px/24px Inter, system-ui, sans-serif); color: var(--ink, #f3efe6);">MBMC Radio</p>
+    </div>
+    <div style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+      <button class="mbmc mbmc-btn mbmc-btn--ghost" type="button" aria-pressed="{{quiet}}" onClick="{{toggleQuiet}}"><sc-if value="{{quiet}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fillRule="evenodd" clipRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z"></path></svg></sc-if>Quiet mode</button>
+      <div style="position: relative;">
+        <button class="{{sleepCls}}" type="button" aria-haspopup="menu" aria-expanded="{{sleepOpen}}" onClick="{{toggleSleepMenu}}">{{sleepLabel}}</button>
+        <sc-if value="{{sleepOpen}}" hint-placeholder-val="{{false}}">
+          <div role="menu" aria-label="Sleep timer" style="position: absolute; top: calc(100% + 8px); right: 0; z-index: 10; min-width: 200px; box-sizing: border-box; padding: 8px; display: flex; flex-direction: column; gap: 2px; background: var(--surface-raised, #1a1626); border: 1px solid var(--border, #2d2742); border-radius: 8px; box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.5));">
+            <sc-for list="{{sleepOptions}}" as="o" hint-placeholder-count="6">
+              <button class="sleep-opt" type="button" role="menuitemradio" aria-checked="{{o.checked}}" onClick="{{o.pick}}"><span>{{o.label}}</span><sc-if value="{{o.checked}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fillRule="evenodd" clipRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z"></path></svg></sc-if></button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <a href="Main.dc.html" style="font: var(--text-label, 500 14px/20px Inter, system-ui, sans-serif); color: var(--link, #f0c93a);">Switch to normal mode</a>
+    </div>
+  </header>
+
+  <main style="flex-grow: 1; display: flex; align-items: flex-start; justify-content: center; box-sizing: border-box; padding: 40px 32px 24px;">
+    <div style="width: 100%; max-width: 560px; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center;">
+      <img src="/_blob/876a350a9cb74b41d962b65dd6f297f1" alt="Sound Meditation Radio artwork: Andrea Cortez with her harp inside the gold disc" style="width: min(400px, 38vh, 100%); aspect-ratio: 1; height: auto; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow-md, 0 4px 3px rgba(0, 0, 0, 0.5), 0 2px 2px rgba(0, 0, 0, 0.4));">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <p role="status" style="margin: 0; font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #8e889c);">{{nowState}}</p>
+        <h1 class="clamp2" style="margin: 0; font: var(--text-display-sm, 400 36px/1.15 Chivo, 'Helvetica Neue', Arial, sans-serif); letter-spacing: -0.025em; color: var(--ink, #f3efe6);">{{nowTitle}}</h1>
+        <p style="margin: 0; font: var(--text-body, 400 16px/24px Inter, system-ui, sans-serif); color: var(--ink-muted, #b8b3c4);">{{nowArtist}}</p>
+        <p style="margin: 0; font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #8e889c);">Sound Meditation Radio • {{nowDuration}}</p>
+        <p style="margin: 0; font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #8e889c);">{{upNext}}</p>
+      </div>
+      <sc-if value="{{showEq}}" hint-placeholder-val="{{true}}">
+        <div class="{{eqClass}}" aria-hidden="true" style="width: 100%; box-sizing: border-box; height: 120px; padding: 12px 16px; display: flex; align-items: flex-end; gap: 4px; background: var(--surface-sunken, #070610); border-radius: 8px;">
+          <sc-for list="{{eqBars}}" as="bar" hint-placeholder-count="32">
+            <div class="eq-bar" style="flex: 1 1 0; height: {{bar.h}}; animation-duration: {{bar.dur}}; animation-delay: {{bar.delay}}; background: var(--brand, #dbaf0b); border-radius: 2px 2px 0 0;"></div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </main>
+
+  <div style="position: fixed; left: 0; right: 0; bottom: 0;">
+    <div class="mbmc mbmc-player" role="region" aria-label="Now playing">
+      <div class="mbmc-player__now">
+        <img class="mbmc-player__art" src="/_blob/876a350a9cb74b41d962b65dd6f297f1" alt="">
+        <div class="mbmc-player__text">
+          <p class="mbmc-player__title" title="{{nowTitle}}">{{nowTitle}}</p>
+          <p class="mbmc-player__artist">{{nowArtist}}</p>
+        </div>
+      </div>
+      <div class="mbmc-player__center">
+        <div class="mbmc-player__transport">
+          <span aria-hidden="true" style="flex: 0 0 40px; width: 40px;"></span>
+          <button class="mbmc mbmc-iconbtn" type="button" aria-label="Previous track" onClick="{{back}}">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.195 18.44c1.25.714 2.805-.189 2.805-1.629v-2.34l6.945 3.968c1.25.715 2.805-.188 2.805-1.628V8.69c0-1.44-1.555-2.343-2.805-1.628L12 11.03v-2.34c0-1.44-1.555-2.343-2.805-1.628l-7.108 4.061c-1.26.72-1.26 2.536 0 3.256l7.108 4.061Z"></path></svg>
+          </button>
+          <span style="position: relative; display: inline-flex;">
+            <button class="{{playCls}}" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+              <sc-if value="{{playing}}" hint-placeholder-val="{{true}}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fillRule="evenodd" clipRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z"></path></svg>
+              </sc-if>
+              <sc-if value="{{paused}}" hint-placeholder-val="{{false}}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fillRule="evenodd" clipRule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"></path></svg>
+              </sc-if>
+            </button>
+            <sc-if value="{{buffering}}" hint-placeholder-val="{{false}}">
+              <span class="spin" aria-hidden="true" style="position: absolute; inset: 0; border-radius: 9999px; border: 3px solid transparent; border-top-color: var(--on-brand, #231b3b); pointer-events: none;"></span>
+            </sc-if>
+          </span>
+          <button class="mbmc mbmc-iconbtn" type="button" aria-label="Next track" onClick="{{forward}}">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5.055 7.06c-1.25-.714-2.805.189-2.805 1.628v8.123c0 1.44 1.555 2.342 2.805 1.628L12 14.471v2.34c0 1.44 1.555 2.342 2.805 1.628l7.108-4.061c1.26-.72 1.26-2.536 0-3.256L14.805 7.06C13.555 6.346 12 7.25 12 8.688v2.34L5.055 7.06Z"></path></svg>
+          </button>
+          <button class="{{repeatCls}}" type="button" aria-label="{{repeatLabel}}" onClick="{{cycleRepeat}}" style="position: relative;">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fillRule="evenodd" clipRule="evenodd" d="M12 5.25c1.213 0 2.415.046 3.605.135a3.256 3.256 0 0 1 3.01 3.01c.044.583.077 1.17.1 1.759L17.03 8.47a.75.75 0 1 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 0 0-1.06-1.06l-1.752 1.751c-.023-.65-.06-1.296-.108-1.939a4.756 4.756 0 0 0-4.392-4.392 49.422 49.422 0 0 0-7.436 0A4.756 4.756 0 0 0 3.89 8.282c-.017.224-.033.447-.046.672a.75.75 0 1 0 1.497.092c.013-.217.028-.434.044-.651a3.256 3.256 0 0 1 3.01-3.01c1.19-.09 2.392-.135 3.605-.135Zm-6.97 6.22a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.752-1.751c.023.65.06 1.296.108 1.939a4.756 4.756 0 0 0 4.392 4.392 49.413 49.413 0 0 0 7.436 0 4.756 4.756 0 0 0 4.392-4.392c.017-.223.032-.447.046-.672a.75.75 0 0 0-1.497-.092c-.013.217-.028.434-.044.651a3.256 3.256 0 0 1-3.01 3.01 47.953 47.953 0 0 1-7.21 0 3.256 3.256 0 0 1-3.01-3.01 47.759 47.759 0 0 1-.1-1.759L6.97 15.53a.75.75 0 0 0 1.06-1.06l-3-3Z"></path></svg>
+            <sc-if value="{{repeatOne}}" hint-placeholder-val="{{false}}"><span class="repeat-badge" aria-hidden="true">1</span></sc-if>
+          </button>
+        </div>
+        <div class="mbmc-player__seek">
+          <span>{{elapsed}}</span>
+          <div class="mbmc-bar" role="slider" tabIndex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{pct}}" aria-valuetext="{{seekText}}">
+            <div class="mbmc-bar__fill" style="width: {{pctCss}};"></div>
+            <div class="mbmc-bar__knob" style="left: {{pctCss}};"></div>
+          </div>
+          <span>{{nowDuration}}</span>
+        </div>
+      </div>
+      <div class="mbmc-player__volume">
+        <button class="mbmc mbmc-iconbtn" type="button" aria-label="Mute">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z"></path><path d="M15.932 7.757a.75.75 0 0 1 1.061 0 6 6 0 0 1 0 8.486.75.75 0 0 1-1.06-1.061 4.5 4.5 0 0 0 0-6.364.75.75 0 0 1 0-1.06Z"></path></svg>
+        </button>
+        <div class="mbmc-bar" role="slider" tabIndex="0" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
+          <div class="mbmc-bar__fill" style="width: 80%;"></div>
+          <div class="mbmc-bar__knob" style="left: 80%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"quiet":{"editor":"boolean","default":false,"section":"Look"},"start":{"editor":"enum","options":["playing","ready","buffering"],"default":"playing","section":"Playback"},"repeat":{"editor":"enum","options":["off","all","one"],"default":"off","section":"Playback"},"sleep":{"editor":"enum","options":["off","15","30","45","60","end"],"default":"off","section":"Playback"},"bars":{"editor":"int","min":12,"max":64,"step":1,"default":32,"section":"Visualizer"},"$preview":{"width":1280,"height":920}}'>
+var TRACKS = [
+  { title: 'Clarity in the Mind', artist: 'Andrea Cortez • harp', duration: '16:02' },
+  { title: 'Stretching Time', artist: 'Andrea Cortez • Tibetan singing bowls', duration: '12:48' },
+  { title: 'Ocean Drum at Dawn', artist: 'Andrea Cortez • ocean drum', duration: '9:15' },
+  { title: 'Crystal Bowls, Evening', artist: 'Andrea Cortez • crystal singing bowls', duration: '14:30' },
+  { title: 'Harp for Settling', artist: 'Andrea Cortez • harp', duration: '11:07' },
+  { title: 'Breath and Bowl', artist: 'Andrea Cortez • Tibetan singing bowls', duration: '18:21' },
+  { title: 'Low Tide', artist: 'Andrea Cortez • ocean drum and harp', duration: '8:44' },
+  { title: 'Returning', artist: 'Andrea Cortez • harp and crystal singing bowls', duration: '20:05' }
+];
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { playing: null, current: 0, quiet: null, repeat: null, sleep: null, sleepOpen: false, touched: false };
+  }
+  renderVals() {
+    var self = this;
+    var start = this.props.start ?? 'playing';
+    var touched = !!this.state.touched;
+    var playing = this.state.playing == null ? start !== 'ready' : this.state.playing;
+    var buffering = !touched && start === 'buffering';
+    var fresh = !touched && start === 'ready';
+    var repeat = this.state.repeat == null ? (this.props.repeat ?? 'off') : this.state.repeat;
+    var current = this.state.current;
+    var sleep = this.state.sleep == null ? String(this.props.sleep ?? 'off') : this.state.sleep;
+    var sleepOpen = !!this.state.sleepOpen;
+    var sleepOptions = [['off', 'Off'], ['15', '15 minutes'], ['30', '30 minutes'], ['45', '45 minutes'], ['60', '60 minutes'], ['end', 'End of this track']].map(function (o) {
+      return { label: o[1], checked: sleep === o[0], pick: function () { self.setState({ sleep: o[0], sleepOpen: false }); } };
+    });
+    var quiet = this.state.quiet == null ? !!(this.props.quiet ?? false) : this.state.quiet;
+    var n = Math.max(12, Math.min(64, this.props.bars ?? 32));
+    var eqBars = [];
+    for (var i = 0; i < n; i++) {
+      var t = n > 1 ? i / (n - 1) : 0;
+      var shape = 0.35 + 0.65 * Math.sin(Math.PI * t);
+      var jitter = ((i * 37) % 11) / 11;
+      var h = Math.max(14, Math.round((0.45 * shape + 0.55 * jitter) * 100));
+      var dur = (2.2 + (((i * 53) % 9) / 9) * 2.6).toFixed(2) + 's';
+      var delay = '-' + ((((i * 29) % 13) / 13) * 3.0).toFixed(2) + 's';
+      eqBars.push({ h: h + '%', dur: dur, delay: delay });
+    }
+    var now = TRACKS[current];
+    return {
+      theme: 'dark',
+      quiet: quiet,
+      showEq: !quiet,
+      toggleQuiet: function () { self.setState({ quiet: !quiet }); },
+      playing: playing,
+      paused: !playing,
+      playCls: 'mbmc mbmc-play' + (playing ? ' mbmc-play--playing' : ''),
+      playLabel: (playing ? 'Pause: ' : 'Play: ') + now.title,
+      eqClass: playing && !buffering ? 'eq' : 'eq eq--paused',
+      eqBars: eqBars,
+      nowTitle: now.title,
+      nowArtist: now.artist,
+      nowDuration: now.duration,
+      nowState: buffering ? 'Loading\u2026' : playing ? 'Playing' : fresh ? 'Ready' : 'Paused',
+      seekText: (fresh ? '0:00' : '3:42') + ' of ' + now.duration,
+      buffering: buffering,
+      elapsed: fresh ? '0:00' : '3:42',
+      pct: fresh ? 0 : 23,
+      pctCss: fresh ? '0%' : '23%',
+      repeatOn: repeat !== 'off',
+      repeatOne: repeat === 'one',
+      repeatCls: 'mbmc mbmc-iconbtn' + (repeat !== 'off' ? ' repeat-on' : ''),
+      repeatLabel: repeat === 'one' ? 'Repeat: one track' : repeat === 'all' ? 'Repeat: collection' : 'Repeat: off',
+      cycleRepeat: function () { self.setState({ repeat: repeat === 'off' ? 'all' : repeat === 'all' ? 'one' : 'off' }); },
+      upNext: repeat === 'one' ? 'Up next: ' + now.title + ' again' : (current === TRACKS.length - 1 && repeat === 'off') ? 'Last track in the collection' : 'Up next: ' + TRACKS[(current + 1) % TRACKS.length].title,
+      sleepOpen: sleepOpen,
+      sleepCls: 'mbmc mbmc-btn mbmc-btn--ghost' + (sleep !== 'off' ? ' is-armed' : ''),
+      sleepOptions: sleepOptions,
+      sleepLabel: sleep === 'off' ? 'Sleep timer' : sleep === 'end' ? 'Sleep: end of track' : 'Sleep: ' + sleep + ' min',
+      toggleSleepMenu: function () { self.setState({ sleepOpen: !sleepOpen }); },
+      togglePlay: function () { self.setState({ playing: !playing, touched: true }); },
+      back: function () { self.setState({ current: (current + TRACKS.length - 1) % TRACKS.length, playing: true, touched: true }); },
+      forward: function () { self.setState({ current: (current + 1) % TRACKS.length, playing: true, touched: true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

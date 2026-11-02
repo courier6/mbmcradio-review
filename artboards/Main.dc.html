@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MBMC Radio, normal mode</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/mbmcradio/tokens.css">
+<link rel="stylesheet" href="ds/mbmcradio/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo&amp;family=Inter:wght@100..900&amp;display=swap">
+<style>
+body { margin: 0; }
+a { color: var(--link, #231b3b); text-decoration: underline; }
+a:hover { text-decoration: none; }
+@keyframes eq-bounce {
+  0% { transform: scaleY(0.16); }
+  50% { transform: scaleY(1); }
+  100% { transform: scaleY(0.16); }
+}
+.eq-bar { transform-origin: bottom center; animation-name: eq-bounce; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+.eq--paused .eq-bar { animation: none; transform: scaleY(0.16); transition: transform 600ms ease-out; }
+@media (prefers-reduced-motion: reduce) { .eq-bar { animation: none; transform: scaleY(0.5); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 0.9s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .spin { animation-duration: 2.4s; } }
+.mbmc-iconbtn.repeat-on { background: var(--brand-soft, #fbf3d6); color: var(--ink, #111827); }
+.repeat-badge { position: absolute; top: 3px; right: 4px; font: 700 12px/1 Inter, system-ui, sans-serif; color: inherit; }
+.mbmc:focus-visible { outline: 2px solid var(--focus, #231b3b); outline-offset: 2px; box-shadow: 0 0 0 2px var(--surface, #ffffff); }
+.mbmc-player { height: auto; min-height: 72px; padding: 12px 16px; }
+.mbmc-player__center { gap: 8px; }
+.mbmc-bar::before { content: ''; position: absolute; left: 0; right: 0; top: -10px; bottom: -10px; }
+.clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+</style>
+</helmet>
+<div data-theme="{{theme}}" style="min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; background: var(--surface, #ffffff); color: var(--ink, #111827); font-family: var(--font-sans, Inter, system-ui, sans-serif); padding-bottom: 98px;">
+
+  <nav class="mbmc mbmc-nav" aria-label="Primary">
+    <div class="mbmc-nav__left">
+      <a class="mbmc-nav__brand" href="./">
+        <img class="mbmc-nav__avatar" src="/_blob/4a3582cd7458da03f9de56fbdecea948" alt="">
+        <span class="mbmc-nav__name">MBMC Radio</span>
+      </a>
+      <ul class="mbmc-nav__links">
+        <li><a href="./" aria-current="page">Library</a></li>
+        <li><a href="http://www.mindbodymusiccenter.com/">About</a></li>
+      </ul>
+    </div>
+    <div class="mbmc-nav__right">
+      <button class="mbmc mbmc-btn mbmc-btn--primary" type="button" onClick="{{playAll}}">Play All</button>
+    </div>
+  </nav>
+
+  <main style="width: 100%; max-width: 1536px; margin: 0 auto; box-sizing: border-box; padding: 40px 32px 48px; display: flex; flex-wrap: wrap; gap: 32px; flex-grow: 1;">
+
+    <aside style="flex: 0 0 300px; display: flex; flex-direction: column; gap: 16px;">
+      <img src="/_blob/876a350a9cb74b41d962b65dd6f297f1" alt="Sound Meditation Radio artwork: Andrea Cortez with her harp inside the gold disc" style="width: 300px; height: 300px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow-md, 0 4px 3px rgba(17, 24, 39, 0.07), 0 2px 2px rgba(17, 24, 39, 0.06));">
+      <p style="margin: 0; font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #6d6e70);">8 tracks • 1:50:52</p>
+      <p style="margin: 0; font: var(--text-body-sm, 400 14px/20px Inter, system-ui, sans-serif); color: var(--ink-muted, #4b5563);">Harp, Tibetan singing bowls, crystal singing bowls and ocean drum, recorded for rest and attention.</p>
+      <p style="margin: 0; font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #6d6e70);">Plays the Sound Meditation Radio collection. No account, no ads, nothing to install.</p>
+      <a href="Chill.dc.html" style="font: var(--text-label, 500 14px/20px Inter, system-ui, sans-serif); color: var(--link, #231b3b);">Switch to chill mode</a>
+    </aside>
+
+    <section style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
+
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <p style="margin: 0; font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #6d6e70);">Collection</p>
+        <h1 style="margin: 0; font: var(--text-display-sm, 400 36px/1.15 Chivo, 'Helvetica Neue', Arial, sans-serif); letter-spacing: -0.025em; color: var(--ink, #111827);">Sound Meditation Radio</h1>
+        <p style="margin: 0; font: var(--text-body, 400 16px/24px Inter, system-ui, sans-serif); color: var(--ink-muted, #4b5563);">All music recorded and composed by Andrea Cortez.</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;">
+          <h2 style="margin: 0; font: var(--text-heading-sm, 700 20px/28px Inter, system-ui, sans-serif); color: var(--ink, #111827);">Now playing</h2>
+          <p style="margin: 0; font: var(--text-body-sm, 400 14px/20px Inter, system-ui, sans-serif); color: var(--ink-muted, #4b5563);">{{nowTitle}}</p>
+          <p role="status" style="margin: 0; padding-left: 8px; border-left: 1px solid var(--border, #e5e7eb); font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #6d6e70);">{{nowState}}</p>
+        </div>
+        <div class="{{eqClass}}" aria-hidden="true" style="box-sizing: border-box; height: 160px; padding: 16px; display: flex; align-items: flex-end; gap: 4px; background: var(--surface-sunken, #f3f4f6); border-radius: 8px;">
+          <sc-for list="{{eqBars}}" as="bar" hint-placeholder-count="40">
+            <div class="eq-bar" style="flex: 1 1 0; height: {{bar.h}}; animation-duration: {{bar.dur}}; animation-delay: {{bar.delay}}; background: var(--brand, #dbaf0b); border-radius: 2px 2px 0 0;"></div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <h2 style="margin: 0; font: var(--text-heading-sm, 700 20px/28px Inter, system-ui, sans-serif); color: var(--ink, #111827);">Tracks</h2>
+        <div class="mbmc-list" role="list">
+          <sc-for list="{{tracks}}" as="t" hint-placeholder-count="8">
+            <div class="{{t.cls}}" role="listitem" aria-current="{{t.current}}">
+              <div class="mbmc-track__lead">
+                <span class="mbmc-track__num" aria-hidden="true">{{t.index}}</span>
+                <button class="{{t.playCls}}" type="button" aria-label="{{t.playLabel}}" onClick="{{t.play}}">
+                  <sc-if value="{{t.playing}}" hint-placeholder-val="{{false}}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fillRule="evenodd" clipRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z"></path></svg>
+                  </sc-if>
+                  <sc-if value="{{t.paused}}" hint-placeholder-val="{{true}}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fillRule="evenodd" clipRule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"></path></svg>
+                  </sc-if>
+                </button>
+              </div>
+              <div class="mbmc-track__text">
+                <p class="mbmc-track__title" title="{{t.title}}">{{t.title}}</p>
+                <p class="mbmc-track__artist">{{t.artist}}</p>
+              </div>
+              <span class="mbmc-track__time">{{t.duration}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="mbmc mbmc-footer">
+    <img class="mbmc-footer__art" src="/_blob/4a3582cd7458da03f9de56fbdecea948" alt="">
+    <div class="mbmc-footer__name">MBMC Radio</div>
+    <ul class="mbmc-footer__social">
+      <li><a href="http://www.mindbodymusiccenter.com/" aria-label="Visit our Website page"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm6.75 7.5h-2.92a15.3 15.3 0 0 0-1.3-4.09 8.27 8.27 0 0 1 4.22 4.09ZM12 3.76c.95 1.1 1.72 2.95 2.11 5.99H9.89c.39-3.04 1.16-4.89 2.11-5.99ZM3.76 12c0-.52.05-1.02.14-1.5h3.24c-.05.49-.08.99-.08 1.5s.03 1.01.08 1.5H3.9c-.09-.48-.14-.98-.14-1.5Zm1.49 3h2.92c.25 1.51.69 2.9 1.3 4.09A8.27 8.27 0 0 1 5.25 15Zm2.92-6H5.25a8.27 8.27 0 0 1 4.22-4.09c-.61 1.19-1.05 2.58-1.3 4.09ZM12 20.24c-.95-1.1-1.72-2.95-2.11-5.99h4.22c-.39 3.04-1.16 4.89-2.11 5.99Zm2.35-7.49H9.65A14 14 0 0 1 9.56 12c0-.52.03-1.02.09-1.5h4.7c.06.48.09.98.09 1.5s-.03 1.02-.09 1.5Zm.18 6.34c.61-1.19 1.05-2.58 1.3-4.09h2.92a8.27 8.27 0 0 1-4.22 4.09Zm1.4-5.59c.05-.49.08-.99.08-1.5s-.03-1.01-.08-1.5h3.24c.09.48.14.98.14 1.5s-.05 1.02-.14 1.5h-3.24Z"></path></svg></a></li>
+      <li><a href="https://www.instagram.com/mindbodymusiccenter/" aria-label="Visit our Instagram page"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"></path></svg></a></li>
+      <li><a href="https://www.youtube.com/@AndreaCortez/" aria-label="Visit our YouTube page"><svg viewBox="0 0 19 14" aria-hidden="true" focusable="false"><path d="M18.567 2.227C18.351 1.375 17.713.7 16.896.471 15.416.064 9.5.064 9.5.064S3.692.038 2.213.445C1.395.675.613 1.375.397 2.227 0 3.78.036 7 .036 7s-.036 3.22.361 4.773c.216.853 1.01 1.553 1.816 1.782 1.479.42 7.287.382 7.287.382s5.808.025 7.287-.382c.818-.229 1.575-.929 1.792-1.782.397-1.54.397-4.773.397-4.773s-.012-3.22-.409-4.773ZM7.684 10.08V3.92L12.41 7l-4.726 3.08Z"></path></svg></a></li>
+    </ul>
+    <div class="mbmc-footer__credit">All music recorded and composed by Andrea Cortez.</div>
+    <div class="mbmc-footer__copy">© 2026 Mind Body Music Center</div>
+  </footer>
+
+  <div style="position: fixed; left: 0; right: 0; bottom: 0;">
+    <div class="mbmc mbmc-player" role="region" aria-label="Now playing">
+      <div class="mbmc-player__now">
+        <img class="mbmc-player__art" src="/_blob/876a350a9cb74b41d962b65dd6f297f1" alt="">
+        <div class="mbmc-player__text">
+          <p class="mbmc-player__title" title="{{nowTitle}}">{{nowTitle}}</p>
+          <p class="mbmc-player__artist">{{nowArtist}}</p>
+        </div>
+      </div>
+      <div class="mbmc-player__center">
+        <div class="mbmc-player__transport">
+          <span aria-hidden="true" style="flex: 0 0 40px; width: 40px;"></span>
+          <button class="mbmc mbmc-iconbtn" type="button" aria-label="Previous track" onClick="{{back}}">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.195 18.44c1.25.714 2.805-.189 2.805-1.629v-2.34l6.945 3.968c1.25.715 2.805-.188 2.805-1.628V8.69c0-1.44-1.555-2.343-2.805-1.628L12 11.03v-2.34c0-1.44-1.555-2.343-2.805-1.628l-7.108 4.061c-1.26.72-1.26 2.536 0 3.256l7.108 4.061Z"></path></svg>
+          </button>
+          <span style="position: relative; display: inline-flex;">
+            <button class="{{playCls}}" type="button" aria-label="{{playLabel}}" onClick="{{togglePlay}}">
+              <sc-if value="{{playing}}" hint-placeholder-val="{{true}}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fillRule="evenodd" clipRule="evenodd" d="M6.75 5.25a.75.75 0 0 1 .75-.75H9a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H7.5a.75.75 0 0 1-.75-.75V5.25Zm7.5 0A.75.75 0 0 1 15 4.5h1.5a.75.75 0 0 1 .75.75v13.5a.75.75 0 0 1-.75.75H15a.75.75 0 0 1-.75-.75V5.25Z"></path></svg>
+              </sc-if>
+              <sc-if value="{{paused}}" hint-placeholder-val="{{false}}">
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fillRule="evenodd" clipRule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"></path></svg>
+              </sc-if>
+            </button>
+            <sc-if value="{{buffering}}" hint-placeholder-val="{{false}}">
+              <span class="spin" aria-hidden="true" style="position: absolute; inset: 0; border-radius: 9999px; border: 3px solid transparent; border-top-color: var(--on-brand, #231b3b); pointer-events: none;"></span>
+            </sc-if>
+          </span>
+          <button class="mbmc mbmc-iconbtn" type="button" aria-label="Next track" onClick="{{forward}}">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5.055 7.06c-1.25-.714-2.805.189-2.805 1.628v8.123c0 1.44 1.555 2.342 2.805 1.628L12 14.471v2.34c0 1.44 1.555 2.342 2.805 1.628l7.108-4.061c1.26-.72 1.26-2.536 0-3.256L14.805 7.06C13.555 6.346 12 7.25 12 8.688v2.34L5.055 7.06Z"></path></svg>
+          </button>
+          <button class="{{repeatCls}}" type="button" aria-label="{{repeatLabel}}" onClick="{{cycleRepeat}}" style="position: relative;">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fillRule="evenodd" clipRule="evenodd" d="M12 5.25c1.213 0 2.415.046 3.605.135a3.256 3.256 0 0 1 3.01 3.01c.044.583.077 1.17.1 1.759L17.03 8.47a.75.75 0 1 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 0 0-1.06-1.06l-1.752 1.751c-.023-.65-.06-1.296-.108-1.939a4.756 4.756 0 0 0-4.392-4.392 49.422 49.422 0 0 0-7.436 0A4.756 4.756 0 0 0 3.89 8.282c-.017.224-.033.447-.046.672a.75.75 0 1 0 1.497.092c.013-.217.028-.434.044-.651a3.256 3.256 0 0 1 3.01-3.01c1.19-.09 2.392-.135 3.605-.135Zm-6.97 6.22a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.752-1.751c.023.65.06 1.296.108 1.939a4.756 4.756 0 0 0 4.392 4.392 49.413 49.413 0 0 0 7.436 0 4.756 4.756 0 0 0 4.392-4.392c.017-.223.032-.447.046-.672a.75.75 0 0 0-1.497-.092c-.013.217-.028.434-.044.651a3.256 3.256 0 0 1-3.01 3.01 47.953 47.953 0 0 1-7.21 0 3.256 3.256 0 0 1-3.01-3.01 47.759 47.759 0 0 1-.1-1.759L6.97 15.53a.75.75 0 0 0 1.06-1.06l-3-3Z"></path></svg>
+            <sc-if value="{{repeatOne}}" hint-placeholder-val="{{false}}"><span class="repeat-badge" aria-hidden="true">1</span></sc-if>
+          </button>
+        </div>
+        <div class="mbmc-player__seek">
+          <span>{{elapsed}}</span>
+          <div class="mbmc-bar" role="slider" tabIndex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{pct}}" aria-valuetext="{{seekText}}">
+            <div class="mbmc-bar__fill" style="width: {{pctCss}};"></div>
+            <div class="mbmc-bar__knob" style="left: {{pctCss}};"></div>
+          </div>
+          <span>{{nowDuration}}</span>
+        </div>
+      </div>
+      <div class="mbmc-player__volume">
+        <button class="mbmc mbmc-iconbtn" type="button" aria-label="Mute">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M13.5 4.06c0-1.336-1.616-2.005-2.56-1.06l-4.5 4.5H4.508c-1.141 0-2.318.664-2.66 1.905A9.76 9.76 0 0 0 1.5 12c0 .898.121 1.768.35 2.595.341 1.24 1.518 1.905 2.659 1.905h1.93l4.5 4.5c.945.945 2.561.276 2.561-1.06V4.06ZM18.584 5.106a.75.75 0 0 1 1.06 0c3.808 3.807 3.808 9.98 0 13.788a.75.75 0 0 1-1.06-1.06 8.25 8.25 0 0 0 0-11.668.75.75 0 0 1 0-1.06Z"></path><path d="M15.932 7.757a.75.75 0 0 1 1.061 0 6 6 0 0 1 0 8.486.75.75 0 0 1-1.06-1.061 4.5 4.5 0 0 0 0-6.364.75.75 0 0 1 0-1.06Z"></path></svg>
+        </button>
+        <div class="mbmc-bar" role="slider" tabIndex="0" aria-label="Volume" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80">
+          <div class="mbmc-bar__fill" style="width: 80%;"></div>
+          <div class="mbmc-bar__knob" style="left: 80%;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light","section":"Look"},"start":{"editor":"enum","options":["playing","ready","buffering"],"default":"playing","section":"Playback"},"repeat":{"editor":"enum","options":["off","all","one"],"default":"off","section":"Playback"},"bars":{"editor":"int","min":12,"max":64,"step":1,"default":40,"section":"Visualizer"},"$preview":{"width":1280,"height":1320}}'>
+var TRACKS = [
+  { title: 'Clarity in the Mind', artist: 'Andrea Cortez • harp', duration: '16:02' },
+  { title: 'Stretching Time', artist: 'Andrea Cortez • Tibetan singing bowls', duration: '12:48' },
+  { title: 'Ocean Drum at Dawn', artist: 'Andrea Cortez • ocean drum', duration: '9:15' },
+  { title: 'Crystal Bowls, Evening', artist: 'Andrea Cortez • crystal singing bowls', duration: '14:30' },
+  { title: 'Harp for Settling', artist: 'Andrea Cortez • harp', duration: '11:07' },
+  { title: 'Breath and Bowl', artist: 'Andrea Cortez • Tibetan singing bowls', duration: '18:21' },
+  { title: 'Low Tide', artist: 'Andrea Cortez • ocean drum and harp', duration: '8:44' },
+  { title: 'Returning', artist: 'Andrea Cortez • harp and crystal singing bowls', duration: '20:05' }
+];
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { playing: null, current: 0, repeat: null, touched: false };
+  }
+  renderVals() {
+    var self = this;
+    var start = this.props.start ?? 'playing';
+    var touched = !!this.state.touched;
+    var playing = this.state.playing == null ? start !== 'ready' : this.state.playing;
+    var buffering = !touched && start === 'buffering';
+    var fresh = !touched && start === 'ready';
+    var repeat = this.state.repeat == null ? (this.props.repeat ?? 'off') : this.state.repeat;
+    var current = this.state.current;
+    var n = Math.max(12, Math.min(64, this.props.bars ?? 40));
+    var eqBars = [];
+    for (var i = 0; i < n; i++) {
+      var t = n > 1 ? i / (n - 1) : 0;
+      var shape = 0.35 + 0.65 * Math.sin(Math.PI * t);
+      var jitter = ((i * 37) % 11) / 11;
+      var h = Math.max(14, Math.round((0.45 * shape + 0.55 * jitter) * 100));
+      var dur = (0.55 + (((i * 53) % 9) / 9) * 0.9).toFixed(2) + 's';
+      var delay = '-' + ((((i * 29) % 13) / 13) * 1.2).toFixed(2) + 's';
+      eqBars.push({ h: h + '%', dur: dur, delay: delay });
+    }
+    var tracks = TRACKS.map(function (tr, idx) {
+      var isCurrent = idx === current;
+      var isPlaying = isCurrent && playing;
+      return {
+        index: idx + 1,
+        title: tr.title,
+        artist: tr.artist,
+        duration: tr.duration,
+        cls: 'mbmc mbmc-track' + (isCurrent ? ' mbmc-track--current' : ''),
+        playCls: 'mbmc mbmc-play mbmc-play--sm' + (isPlaying ? ' mbmc-play--playing' : ''),
+        playLabel: (isPlaying ? 'Pause: ' : 'Play: ') + tr.title,
+        playing: isPlaying,
+        current: isCurrent ? 'true' : 'false',
+        paused: !isPlaying,
+        play: function () {
+          if (isCurrent) { self.setState({ playing: !playing, touched: true }); }
+          else { self.setState({ current: idx, playing: true, touched: true }); }
+        }
+      };
+    });
+    var now = TRACKS[current];
+    return {
+      theme: this.props.theme ?? 'light',
+      playing: playing,
+      paused: !playing,
+      playCls: 'mbmc mbmc-play' + (playing ? ' mbmc-play--playing' : ''),
+      playLabel: (playing ? 'Pause: ' : 'Play: ') + now.title,
+      eqClass: playing && !buffering ? 'eq' : 'eq eq--paused',
+      eqBars: eqBars,
+      tracks: tracks,
+      nowTitle: now.title,
+      nowArtist: now.artist,
+      nowDuration: now.duration,
+      nowState: buffering ? 'Loading\u2026' : playing ? 'Playing' : fresh ? 'Ready' : 'Paused',
+      seekText: (fresh ? '0:00' : '3:42') + ' of ' + now.duration,
+      buffering: buffering,
+      elapsed: fresh ? '0:00' : '3:42',
+      pct: fresh ? 0 : 23,
+      pctCss: fresh ? '0%' : '23%',
+      repeatOn: repeat !== 'off',
+      repeatOne: repeat === 'one',
+      repeatCls: 'mbmc mbmc-iconbtn' + (repeat !== 'off' ? ' repeat-on' : ''),
+      repeatLabel: repeat === 'one' ? 'Repeat: one track' : repeat === 'all' ? 'Repeat: collection' : 'Repeat: off',
+      cycleRepeat: function () { self.setState({ repeat: repeat === 'off' ? 'all' : repeat === 'all' ? 'one' : 'off' }); },
+      playAll: function () { self.setState({ current: 0, playing: true, touched: true }); },
+      togglePlay: function () { self.setState({ playing: !playing, touched: true }); },
+      back: function () { self.setState({ current: (current + TRACKS.length - 1) % TRACKS.length, playing: true, touched: true }); },
+      forward: function () { self.setState({ current: (current + 1) % TRACKS.length, playing: true, touched: true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

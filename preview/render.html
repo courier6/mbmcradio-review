@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../design-system/tokens.css">
+<link rel="stylesheet" href="../design-system/components/bundle.css">
+<style>body{margin:0}</style>
+</head><body><div id="root"></div>
+<script>
+(async function () {
+  const q = new URLSearchParams(location.search);
+  const board = q.get('board') || 'Main';
+  let src = await (await fetch('../artboards/' + board + '.dc.html')).text();
+  src = src.replace(/\/_blob\/4a3582cd7458da03f9de56fbdecea948/g, '../assets/mbmc-logo.webp')
+           .replace(/\/_blob\/876a350a9cb74b41d962b65dd6f297f1/g, '../assets/podcast-cover-1400.jpg');
+  const doc = new DOMParser().parseFromString(src, 'text/html');
+  const helmet = doc.querySelector('helmet');
+  if (helmet) { document.head.insertAdjacentHTML('beforeend', helmet.innerHTML); helmet.remove(); }
+  const xdc = doc.querySelector('x-dc');
+  const template = xdc.innerHTML;
+  const scriptEl = doc.querySelector('script[data-dc-script]');
+  const propDefs = JSON.parse(scriptEl.getAttribute('data-props'));
+  const props = {};
+  for (const k in propDefs) if (k[0] !== '$') props[k] = propDefs[k].default;
+  for (const [k, v] of q.entries()) if (k in props) props[k] = (propDefs[k].editor === 'boolean') ? v === 'true' : (propDefs[k].editor === 'int' ? +v : v);
+  class DCLogic { constructor(p) { this.props = p; } setState(p) { Object.assign(this.state, p); render(); } }
+  const Component = new Function('DCLogic', scriptEl.textContent + '\nreturn Component;')(DCLogic);
+  const comp = new Component(props);
+  let handlers = [];
+  const esc = s => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  function lookup(path, scope) { return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), scope); }
+  function expand(tpl, scope) {
+    tpl = tpl.replace(/<sc-for list="\{\{([\w.]+)\}\}" as="(\w+)"[^>]*>([\s\S]*?)<\/sc-for>/g, (m, list, as, inner) => {
+      const arr = lookup(list, scope) || [];
+      return arr.map(item => expand(inner, Object.assign({}, scope, { [as]: item }))).join('');
+    });
+    tpl = tpl.replace(/<sc-if value="\{\{([\w.]+)\}\}"[^>]*>([\s\S]*?)<\/sc-if>/g, (m, v, inner) => lookup(v, scope) ? expand(inner, scope) : '');
+    tpl = tpl.replace(/onClick="\{\{([\w.]+)\}\}"/g, (m, v) => { const f = lookup(v, scope); handlers.push(f); return 'data-onclick="' + (handlers.length - 1) + '"'; });
+    tpl = tpl.replace(/\{\{([\w.]+)\}\}/g, (m, v) => { const val = lookup(v, scope); return val == null ? '' : esc(val); });
+    return tpl;
+  }
+  function render() {
+    handlers = [];
+    const vals = comp.renderVals();
+    document.getElementById('root').innerHTML = expand(template, vals);
+    document.querySelectorAll('[data-onclick]').forEach(el => { el.addEventListener('click', handlers[+el.getAttribute('data-onclick')]); });
+    document.documentElement.setAttribute('data-theme', vals.theme || 'light');
+  }
+  render();
+})();
+</script></body></html>
