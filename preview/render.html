@@ -8,7 +8,7 @@
 (async function () {
   const q = new URLSearchParams(location.search);
   const board = q.get('board') || 'Main';
-  let src = await (await fetch('../artboards/' + board + '.dc.html')).text();
+  let src = await (await fetch('../artboards/' + board + '.dc.html', { cache: 'no-cache' })).text();
   src = src.replace(/\/_blob\/4a3582cd7458da03f9de56fbdecea948/g, '../assets/mbmc-logo.webp')
            .replace(/\/_blob\/876a350a9cb74b41d962b65dd6f297f1/g, '../assets/podcast-cover-1400.jpg');
   const doc = new DOMParser().parseFromString(src, 'text/html');
