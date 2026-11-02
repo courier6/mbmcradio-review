@@ -58,16 +58,13 @@ a:hover { text-decoration: none; }
     <aside style="flex: 0 0 300px; display: flex; flex-direction: column; gap: 16px;">
       <img src="/_blob/876a350a9cb74b41d962b65dd6f297f1" alt="Sound Meditation Radio artwork: Andrea Cortez with her harp inside the gold disc" style="width: 300px; height: 300px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow-md, 0 4px 3px rgba(17, 24, 39, 0.07), 0 2px 2px rgba(17, 24, 39, 0.06));">
       <p style="margin: 0; font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #6d6e70);">8 tracks • 1:50:52</p>
-      <p style="margin: 0; font: var(--text-body-sm, 400 14px/20px Inter, system-ui, sans-serif); color: var(--ink-muted, #4b5563);">Harp, Tibetan singing bowls, crystal singing bowls and ocean drum, recorded for rest and attention.</p>
-      <p style="margin: 0; font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #6d6e70);">Plays the Sound Meditation Radio collection. No account, no ads, nothing to install.</p>
       <a href="Chill.dc.html" style="font: var(--text-label, 500 14px/20px Inter, system-ui, sans-serif); color: var(--link, #231b3b);">Switch to chill mode</a>
     </aside>
 
     <section style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px;">
 
       <div style="display: flex; flex-direction: column; gap: 8px;">
-        <p style="margin: 0; font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #6d6e70);">Collection</p>
-        <h1 style="margin: 0; font: var(--text-display-sm, 400 36px/1.15 Chivo, 'Helvetica Neue', Arial, sans-serif); letter-spacing: -0.025em; color: var(--ink, #111827);">Sound Meditation Radio</h1>
+        <h1 style="margin: 0; font: var(--text-display-sm, 400 36px/1.15 Chivo, 'Helvetica Neue', Arial, sans-serif); letter-spacing: -0.025em; color: var(--ink, #111827);">MBMC Radio</h1>
         <p style="margin: 0; font: var(--text-body, 400 16px/24px Inter, system-ui, sans-serif); color: var(--ink-muted, #4b5563);">All music recorded and composed by Andrea Cortez.</p>
       </div>
 
@@ -75,7 +72,6 @@ a:hover { text-decoration: none; }
         <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;">
           <h2 style="margin: 0; font: var(--text-heading-sm, 700 20px/28px Inter, system-ui, sans-serif); color: var(--ink, #111827);">Now playing</h2>
           <p style="margin: 0; font: var(--text-body-sm, 400 14px/20px Inter, system-ui, sans-serif); color: var(--ink-muted, #4b5563);">{{nowTitle}}</p>
-          <p role="status" style="margin: 0; padding-left: 8px; border-left: 1px solid var(--border, #e5e7eb); font: var(--text-caption, 400 13px/18px Inter, system-ui, sans-serif); color: var(--ink-subtle, #6d6e70);">{{nowState}}</p>
         </div>
         <div class="{{eqClass}}" aria-hidden="true" style="box-sizing: border-box; height: 160px; padding: 16px; display: flex; align-items: flex-end; gap: 4px; background: var(--surface-sunken, #f3f4f6); border-radius: 8px;">
           <sc-for list="{{eqBars}}" as="bar" hint-placeholder-count="40">
@@ -186,14 +182,14 @@ a:hover { text-decoration: none; }
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light","section":"Look"},"start":{"editor":"enum","options":["playing","ready","buffering"],"default":"playing","section":"Playback"},"repeat":{"editor":"enum","options":["off","all","one"],"default":"off","section":"Playback"},"bars":{"editor":"int","min":12,"max":64,"step":1,"default":40,"section":"Visualizer"},"$preview":{"width":1280,"height":1320}}'>
 var TRACKS = [
-  { title: 'Clarity in the Mind', artist: 'Andrea Cortez • harp', duration: '16:02' },
-  { title: 'Stretching Time', artist: 'Andrea Cortez • Tibetan singing bowls', duration: '12:48' },
-  { title: 'Ocean Drum at Dawn', artist: 'Andrea Cortez • ocean drum', duration: '9:15' },
-  { title: 'Crystal Bowls, Evening', artist: 'Andrea Cortez • crystal singing bowls', duration: '14:30' },
-  { title: 'Harp for Settling', artist: 'Andrea Cortez • harp', duration: '11:07' },
-  { title: 'Breath and Bowl', artist: 'Andrea Cortez • Tibetan singing bowls', duration: '18:21' },
-  { title: 'Low Tide', artist: 'Andrea Cortez • ocean drum and harp', duration: '8:44' },
-  { title: 'Returning', artist: 'Andrea Cortez • harp and crystal singing bowls', duration: '20:05' }
+  { title: 'Clarity in the Mind', artist: 'Andrea Cortez', duration: '16:02' },
+  { title: 'Stretching Time', artist: 'Andrea Cortez', duration: '12:48' },
+  { title: 'Ocean Drum at Dawn', artist: 'Andrea Cortez', duration: '9:15' },
+  { title: 'Crystal Bowls, Evening', artist: 'Andrea Cortez', duration: '14:30' },
+  { title: 'Harp for Settling', artist: 'Andrea Cortez', duration: '11:07' },
+  { title: 'Breath and Bowl', artist: 'Andrea Cortez', duration: '18:21' },
+  { title: 'Low Tide', artist: 'Andrea Cortez', duration: '8:44' },
+  { title: 'Returning', artist: 'Andrea Cortez', duration: '20:05' }
 ];
 class Component extends DCLogic {
   constructor(props) {
