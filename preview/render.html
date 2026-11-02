@@ -33,7 +33,7 @@
       return arr.map(item => expand(inner, Object.assign({}, scope, { [as]: item }))).join('');
     });
     tpl = tpl.replace(/<sc-if value="\{\{([\w.]+)\}\}"[^>]*>([\s\S]*?)<\/sc-if>/g, (m, v, inner) => lookup(v, scope) ? expand(inner, scope) : '');
-    tpl = tpl.replace(/onClick="\{\{([\w.]+)\}\}"/g, (m, v) => { const f = lookup(v, scope); handlers.push(f); return 'data-onclick="' + (handlers.length - 1) + '"'; });
+    tpl = tpl.replace(/onClick="\{\{([\w.]+)\}\}"/gi, (m, v) => { const f = lookup(v, scope); handlers.push(f); return 'data-onclick="' + (handlers.length - 1) + '"'; });
     tpl = tpl.replace(/\{\{([\w.]+)\}\}/g, (m, v) => { const val = lookup(v, scope); return val == null ? '' : esc(val); });
     return tpl;
   }
