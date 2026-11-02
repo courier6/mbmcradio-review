@@ -22,31 +22,26 @@
   html, body { margin: 0; background: var(--surface); color: var(--ink); }
   body { font-family: Inter, system-ui, sans-serif; font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
   .wrap { max-width: 1040px; margin: 0 auto; padding: 24px 16px 80px; }
-  header { display: flex; align-items: center; gap: 14px; padding: 8px 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 36px; }
+  header { display: flex; align-items: center; gap: 14px; padding: 8px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
   header img { width: 48px; height: 48px; border-radius: 50%; }
   header .brand { font-family: Chivo, Inter, sans-serif; font-size: 20px; margin: 0; }
   header .sub { margin: 0; color: var(--ink-subtle); font-size: 14px; }
-  h1 { font-family: Chivo, Inter, sans-serif; font-size: 36px; letter-spacing: -0.025em; line-height: 1.1; margin: 0 0 16px; }
-  h2 { font-family: Chivo, Inter, sans-serif; font-size: 24px; letter-spacing: -0.015em; margin: 56px 0 8px; }
+  h2 { font-family: Chivo, Inter, sans-serif; font-size: 24px; letter-spacing: -0.015em; margin: 0 0 12px; }
+  section + section { margin-top: 56px; }
   h2 small { display: block; font-family: Inter, sans-serif; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-subtle); margin-bottom: 6px; }
   p { margin: 0 0 14px; }
-  .lead { font-size: 19px; color: var(--ink-muted); }
-  .note { background: var(--brand-soft); color: var(--on-brand); padding: 14px 18px; border-radius: 10px; font-size: 15px; margin: 20px 0 0; }
-  [data-theme="dark"] .note { color: var(--ink); }
-  ul { padding-left: 22px; margin: 0 0 14px; }
-  li { margin-bottom: 8px; }
-  .look { color: var(--ink-muted); font-size: 15px; margin-bottom: 14px; }
   .states { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
   .states button, .states a { font: inherit; font-size: 14px; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border-strong); background: transparent; color: var(--ink); cursor: pointer; text-decoration: none; }
   .states button[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
-  .states button:hover, .states a:hover { background: var(--indigo-soft); }
+  .states button:not([aria-pressed="true"]):hover, .states a:hover { background: var(--indigo-soft); }
   .states button:focus-visible, .states a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-  .states a { margin-left: auto; color: var(--link); }
+  .states a { color: var(--link); }
+  .states button + a { margin-left: auto; }
   .board { position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-sunken); }
   .board iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; background: var(--surface); }
   .phone { max-width: 399px; margin: 0 auto; padding: 12px; border-radius: 44px; background: #111; box-shadow: var(--shadow-lg); }
   .phone .board { border-radius: 32px; border: 0; }
-  .caption { color: var(--ink-subtle); font-size: 13px; margin: 10px 0 0; }
+  .phone { margin-top: 0; }
   footer { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--ink-subtle); font-size: 14px; }
 </style>
 </head>
@@ -61,47 +56,31 @@
   </div>
 </header>
 
-<h1>The MBMC Radio player, before it gets built</h1>
-<p class="lead">A web page that plays the Sound Meditation Radio collection: harp, Tibetan singing bowls, crystal singing bowls and ocean drum, recorded and composed by Andrea Cortez. It opens in a browser on a computer or a phone. No account, no ads, nothing to install.</p>
-<p>Below are the three drawings of the page. They are design drawings, not the finished player: you can click the buttons and switch states, but nothing plays yet. The recordings come later and drop into the finished page. Nothing is built until you are happy with these.</p>
-<p class="note">Three things to look at: does it feel like the Center, is anything missing from what a listener needs, and would you be happy to send people here.</p>
-
-<h2 id="normal"><small>Drawing 1 of 3</small>Normal mode</h2>
-<p class="look">The everyday view on a computer. The collection artwork on the left, the track list on the right, and the now-playing bar fixed along the bottom. The bouncing equalizer under "Now playing" is the only thing that moves. The theme follows the viewer's system: light by day, dark if their computer is set dark.</p>
+<section>
+<h2>Normal mode</h2>
 <div class="states" data-for="main">
-  <button data-q="start=playing" aria-pressed="true">Playing</button>
-  <button data-q="start=ready">Before anything plays</button>
-  <button data-q="start=buffering">Loading a track</button>
-  <button data-q="start=playing&repeat=one">Repeat one track</button>
-  <button data-q="start=playing&theme=dark">Dark theme</button>
-  <a href="preview/render.html?board=Main" target="_blank" rel="noopener">Open full size</a>
+  <button data-q="start=playing&theme=light" aria-pressed="true">Light</button>
+  <button data-q="start=playing&theme=dark" aria-pressed="false">Dark</button>
 </div>
 <div class="board" data-w="1280" data-h="1320">
   <iframe id="main" title="Normal mode drawing" src="preview/render.html?board=Main&start=playing"></iframe>
 </div>
-<p class="caption">Drawn at 1280 pixels wide, scaled to fit this page. Open full size to see it at real scale.</p>
+</section>
 
-<h2 id="chill"><small>Drawing 2 of 3</small>Chill mode</h2>
-<p class="look">For listening without the page in the way. Always dark. The artwork, the track, what is up next, a slow equalizer, and two controls: a quiet toggle that stops everything moving, and a sleep timer that pauses after a chosen time. One link in the corner goes back to normal mode.</p>
+<section>
+<h2>Chill mode</h2>
 <div class="states" data-for="chill">
-  <button data-q="start=playing" aria-pressed="true">Playing</button>
-  <button data-q="start=playing&quiet=true">Quiet (nothing moves)</button>
-  <button data-q="start=playing&sleep=30">Sleep timer set</button>
-  <button data-q="start=ready">Before anything plays</button>
-  <a href="preview/render.html?board=Chill" target="_blank" rel="noopener">Open full size</a>
+  <button data-q="start=playing" aria-pressed="true">Chill</button>
+  <button data-q="start=playing&quiet=true" aria-pressed="false">Quiet</button>
 </div>
 <div class="board" data-w="1280" data-h="920">
   <iframe id="chill" title="Chill mode drawing" src="preview/render.html?board=Chill&start=playing"></iframe>
 </div>
-<p class="caption">Drawn at 1280 pixels wide, scaled to fit this page.</p>
+</section>
 
-<h2 id="phone"><small>Drawing 3 of 3</small>Chill mode on a phone</h2>
-<p class="look">The same chill mode on a phone. The quiet and sleep controls sit in a row just above the bar, within reach of a thumb, and the bar gets a larger play button and a real seek slider. If you are reading this on your phone, "Open full size" shows it filling your screen.</p>
+<section>
+<h2>Phone mode</h2>
 <div class="states" data-for="phone">
-  <button data-q="start=playing" aria-pressed="true">Playing</button>
-  <button data-q="start=playing&quiet=true">Quiet</button>
-  <button data-q="start=playing&sleep=15">Sleep timer set</button>
-  <button data-q="start=ready">Before anything plays</button>
   <a href="preview/render.html?board=ChillPhone" target="_blank" rel="noopener">Open full size</a>
 </div>
 <div class="phone">
@@ -109,46 +88,29 @@
     <iframe id="phone" title="Chill mode on a phone drawing" src="preview/render.html?board=ChillPhone&start=playing"></iframe>
   </div>
 </div>
-<p class="caption">Drawn at the size of an iPhone screen. Scroll inside it if your screen is shorter.</p>
+</section>
 
-<h2>Not drawn yet</h2>
-<p class="look">These are described in the written specification and will be in the finished page, but there is no drawing of them. Nothing to approve here, just so you know what is missing on purpose.</p>
-<ul>
-  <li>Normal mode on a phone. Only chill mode has a phone drawing; the phone version of normal mode stacks the same pieces in one column.</li>
-  <li>The narrower menu on small windows.</li>
-  <li>The muted state, the message when a track fails to load, and the "Try again" button.</li>
-  <li>Dragging the progress slider with a finger. Tapping to a point and the keyboard work; dragging is planned.</li>
-</ul>
 
-<h2>Decisions to confirm</h2>
-<p class="look">Choices made along the way. A quick yes to each, or tell me what you would change.</p>
-<ul>
-  <li><strong>The collection plays in order.</strong> There is no shuffle, because an eight-track meditation collection is meant to be heard as a sequence. Repeat is there: the whole collection, or one track.</li>
-  <li><strong>A sleep timer in chill mode.</strong> 15, 30, 45 or 60 minutes, or the end of the current track. It pauses the music, nothing more.</li>
-  <li><strong>The quiet toggle.</strong> Removes the equalizer so nothing on the screen moves. The page does not shift around when it is switched.</li>
-  <li><strong>The wording.</strong> "Sound Meditation Radio" as the collection title, "All music recorded and composed by Andrea Cortez." in the footer, and the line "Plays the Sound Meditation Radio collection. No account, no ads, nothing to install."</li>
-  <li><strong>The eight track titles and their order,</strong> as shown in the track list of the first drawing.</li>
-  <li><strong>The footer links:</strong> the Center's website, Instagram and YouTube.</li>
-  <li><strong>Gold and indigo, the logo's own colours,</strong> as the only accent colours, with the artwork never tinted or cropped.</li>
-</ul>
-
-<h2>Sending your thoughts</h2>
-<p>Reply by email with whatever comes to mind, big or small, or we go through it together on a call. Naming the drawing (1, 2 or 3) is enough for me to find what you mean.</p>
-
-<footer>This page is for review and is not listed anywhere. © 2026 Mind Body Music Center.</footer>
+<footer>Design drawings for review. Nothing plays yet.</footer>
 
 </div>
 <script>
   // Scale each drawing to the width available, keeping its real size inside the frame.
+  // Desktop drawings grow to their content so the page scrolls as one; the phone keeps its screen height.
   function fit() {
     document.querySelectorAll('.board').forEach(function (b) {
       var w = +b.dataset.w, h = +b.dataset.h, s = Math.min(1, b.clientWidth / w);
       var f = b.querySelector('iframe');
-      f.style.width = w + 'px'; f.style.height = h + 'px'; f.style.transform = 'scale(' + s + ')';
+      f.style.width = w + 'px';
+      if (!b.closest('.phone')) {
+        try { var d = f.contentDocument; if (d && d.body) h = Math.max(h, d.documentElement.scrollHeight); } catch (e) {}
+      }
+      f.style.height = h + 'px'; f.style.transform = 'scale(' + s + ')';
       b.style.height = (h * s) + 'px';
     });
   }
   fit(); window.addEventListener('resize', fit);
+  document.querySelectorAll('iframe').forEach(function (f) { f.addEventListener('load', function () { setTimeout(fit, 50); }); });
 
   // The state pills reload the drawing with the chosen editor tweaks.
   var boards = { main: 'Main', chill: 'Chill', phone: 'ChillPhone' };
